@@ -102,17 +102,17 @@ if prompt := st.chat_input("What can I help you with?"):
         thinking_placeholder.markdown("Thinking...")
         
         try:
-            # Create agent configuration with the required parameters
-            # Initialize your agent with the configuration that matches your actual implementation
-            agent = Agent(AgentConfig(
-                chat_model=chat_model,
-                utility_model=utility_model,
-                embeddings_model=embeddings_model,
-                browser_model=browser_model
-            ))
-            
-            # Call the agent with the user's prompt
-            response = agent.run(prompt)
+            try:
+                # Create agent configuration with the required parameters
+                agent = Agent(AgentConfig(
+                    chat_model=chat_model,
+                    utility_model=utility_model,
+                    embeddings_model=embeddings_model,
+                    browser_model=browser_model
+                ))
+                
+                # Call the agent with the user's prompt
+                response = agent.run(prompt)
             except NameError:
                 # Fallback if the agent import failed - this is just a placeholder
                 st.warning("Agent implementation not found. Displaying mock response.")
