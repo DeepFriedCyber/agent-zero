@@ -90,16 +90,24 @@ if prompt := st.chat_input("What can I help you with?"):
         thinking_placeholder.markdown("Thinking...")
         
         try:
-            # Create agent configuration from sidebar settings
-            config = {
-                "model": model_option,
-                "temperature": temperature,
-                "max_tokens": max_tokens
-            }
-            
-            # Initialize your agent with the configuration
-            # Modify this based on your actual agent implementation
+            # Try to inspect the AgentConfig class to determine correct parameters
             try:
+                import inspect
+                config_params = inspect.signature(AgentConfig.__init__).parameters
+                config = {}
+                
+                # Only add parameters that exist in your AgentConfig class
+                if 'model' in config_params:
+                    config["model"] = model_option
+                if 'model_name' in config_params:
+                    config["model_name"] = model_option
+                if 'temperature' in config_params:
+                    config["temperature"] = temperature
+                if 'max_tokens' in config_params:
+                    config["max_tokens"] = max_tokens
+                
+                # Initialize your agent with the configuration
+                # Modify this based on your actual agent implementation
                 agent = Agent(AgentConfig(**config))
                 response = agent.run(prompt)
             except NameError:
