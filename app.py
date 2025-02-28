@@ -30,26 +30,38 @@ st.markdown("An interactive interface for your AI agent")
 # Sidebar for configuration
 st.sidebar.header("Configuration")
 
-# Example configuration options - customize based on your agent's parameters
-model_option = st.sidebar.selectbox(
-    "Model",
-    ["gpt-3.5-turbo", "gpt-4", "claude-2", "local-llm"]
+# Configuration options based on your actual AgentConfig parameters
+st.sidebar.subheader("Chat Model")
+chat_model = st.sidebar.selectbox(
+    "Chat Model",
+    ["gpt-3.5-turbo", "gpt-4", "claude-2"]
 )
 
+st.sidebar.subheader("Utility Model")
+utility_model = st.sidebar.selectbox(
+    "Utility Model",
+    ["gpt-3.5-turbo", "gpt-4", "text-embedding-ada-002"]
+)
+
+st.sidebar.subheader("Embeddings Model")
+embeddings_model = st.sidebar.selectbox(
+    "Embeddings Model", 
+    ["text-embedding-ada-002", "all-MiniLM-L6-v2"]
+)
+
+st.sidebar.subheader("Browser Model")
+browser_model = st.sidebar.selectbox(
+    "Browser Model",
+    ["gpt-3.5-turbo", "gpt-4"]
+)
+
+# Add temperature slider for models that support it
 temperature = st.sidebar.slider(
     "Temperature",
     min_value=0.0,
     max_value=1.0,
     value=0.7,
     step=0.1
-)
-
-max_tokens = st.sidebar.slider(
-    "Max Tokens",
-    min_value=100,
-    max_value=4000,
-    value=1000,
-    step=100
 )
 
 # API key inputs (these will be securely stored in Streamlit secrets when deployed)
@@ -90,26 +102,17 @@ if prompt := st.chat_input("What can I help you with?"):
         thinking_placeholder.markdown("Thinking...")
         
         try:
-            # Try to inspect the AgentConfig class to determine correct parameters
-            try:
-                import inspect
-                config_params = inspect.signature(AgentConfig.__init__).parameters
-                config = {}
-                
-                # Only add parameters that exist in your AgentConfig class
-                if 'model' in config_params:
-                    config["model"] = model_option
-                if 'model_name' in config_params:
-                    config["model_name"] = model_option
-                if 'temperature' in config_params:
-                    config["temperature"] = temperature
-                if 'max_tokens' in config_params:
-                    config["max_tokens"] = max_tokens
-                
-                # Initialize your agent with the configuration
-                # Modify this based on your actual agent implementation
-                agent = Agent(AgentConfig(**config))
-                response = agent.run(prompt)
+            # Create agent configuration with the required parameters
+            # Initialize your agent with the configuration that matches your actual implementation
+            agent = Agent(AgentConfig(
+                chat_model=chat_model,
+                utility_model=utility_model,
+                embeddings_model=embeddings_model,
+                browser_model=browser_model
+            ))
+            
+            # Call the agent with the user's prompt
+            response = agent.run(prompt)
             except NameError:
                 # Fallback if the agent import failed - this is just a placeholder
                 st.warning("Agent implementation not found. Displaying mock response.")
