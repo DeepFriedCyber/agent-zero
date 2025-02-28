@@ -104,12 +104,15 @@ if prompt := st.chat_input("What can I help you with?"):
         try:
             try:
                 # Create agent configuration with the required parameters
-                agent = Agent(AgentConfig(
+                config = AgentConfig(
                     chat_model=chat_model,
                     utility_model=utility_model,
                     embeddings_model=embeddings_model,
                     browser_model=browser_model
-                ))
+                )
+                
+                # Initialize the agent with the config object
+                agent = Agent(config)
                 
                 # Call the agent with the user's prompt
                 response = agent.run(prompt)
